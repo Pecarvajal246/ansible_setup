@@ -16,9 +16,7 @@
     - name: Enable CORPS
       community.general.copr:
         state: enabled
-        name:
-          - peterwu/iosevka
-          - griffis/neovim-nightly
+        name: peterwu/iosevka
 
     - name: install packages
       package:
@@ -33,7 +31,6 @@
           - kitty
           - streamlink
           - iosevka
-          - neovim-nightly
 
     - name: dotfiles
       become: true
