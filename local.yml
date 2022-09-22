@@ -4,24 +4,32 @@
   become: true
 
   tasks:
-  - name: install packages
-    package:
-      name:
-        - stow
-        - rofi
-        - awesome
-        - mpv
-        - sxhkd
-        - picom
-        - nitrogen
-        - kitty
-        - streamlink
+    - name: Enable the RPM Fusion repository
+      dnf:
+        name:
+          - "https://mirros.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ansible_distribution_major_version}}.noarch.rpm"
+          - "https://mirros.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ansible_distribution_major_version}}.noarch.rpm"
+        state: present
+      when: ansible_distribution == 'Fedora'
 
-  - name: dotfiles
-    git:
-      repo: git@github.com:Pecarvajal246/.dotfiles.git
-      dest: "{{ ansible_env.HOME }}"
-      clone: yes
+    - name: install packages
+      package:
+        name:
+          - stow
+          - rofi
+          - awesome
+          - mpv
+          - sxhkd
+          - picom
+          - nitrogen
+          - kitty
+          - streamlink
 
-  - name: stow dotfiles
-    command: chdir="{{ ansible_env.HOME }}/.dotfiles stow ."
+    - name: dotfiles
+      git:
+        repo: git@github.com:Pecarvajal246/.dotfiles.git
+        dest: "{{ ansible_env.HOME }}"
+        clone: yes
+
+    - name: stow dotfiles
+      command: chdir="{{ ansible_env.HOME }}/.dotfiles stow ."
