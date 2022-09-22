@@ -7,8 +7,8 @@
     - name: Enable the RPM Fusion repository
       dnf:
         name:
-          - "https://mirros.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ansible_distribution_major_version}}.noarch.rpm"
-          - "https://mirros.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ansible_distribution_major_version}}.noarch.rpm"
+          - "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ansible_distribution_major_version}}.noarch.rpm"
+          - "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ansible_distribution_major_version}}.noarch.rpm"
         state: present
       when: ansible_distribution == 'Fedora'
 
@@ -26,6 +26,7 @@
           - streamlink
 
     - name: dotfiles
+      become_user: pedro
       git:
         repo: git@github.com:Pecarvajal246/.dotfiles.git
         dest: "{{ ansible_env.HOME }}"
