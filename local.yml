@@ -9,3 +9,19 @@
       name:
         - stow
         - rofi
+        - awesome
+        - mpv
+        - sxhkd
+        - picom
+        - nitrogen
+        - kitty
+        - streamlink
+
+  - name: dotfiles
+    git:
+      repo: git@github.com:Pecarvajal246/.dotfiles.git
+      dest: {{ ansible_env.HOME }}
+      clone: yes
+
+  - name: stow dotfiles
+    command: chdir={{ ansible_env.HOME }}/.dotfiles stow .
