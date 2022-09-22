@@ -30,7 +30,7 @@
           - nitrogen
           - kitty
           - streamlink
-          - iosevka
+          - iosevka-fonts
 
     - name: dotfiles
       become: true
