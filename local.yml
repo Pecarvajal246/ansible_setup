@@ -36,8 +36,10 @@
       become_user: pedro
       git:
         repo: https://github.com/Pecarvajal246/.dotfiles.git
-        dest: /home/pedro/
+        dest: /home/pedro/.dotfiles/
         clone: yes
 
     - name: stow dotfiles
-      command: chdir="{{ ansible_env.HOME }}/.dotfiles stow ."
+      command: 
+        chdir: /home/pedro/.dotfiles/ 
+        cmd: stow .
