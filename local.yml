@@ -33,11 +33,10 @@
           - iosevka-fonts
 
     - name: dotfiles
-      become: true
-      become_user: "pedro"
+      become_user: pedro
       git:
         repo: https://github.com/Pecarvajal246/.dotfiles.git
-        dest: "{{ ansible_env.HOME }}"
+        dest: /home/pedro/
         clone: yes
 
     - name: stow dotfiles
