@@ -16,7 +16,9 @@
     - name: Enable CORPS
       community.general.copr:
         state: enabled
-        name: peterwu/iosevka
+        name: 
+          - peterwu/iosevka
+          - agriffis/neovim-nightly
 
     - name: install packages
       package:
@@ -31,6 +33,7 @@
           - kitty
           - streamlink
           - iosevka-fonts
+          - neovim
 
     - name: dotfiles
       become_user: pedro
@@ -39,7 +42,17 @@
         dest: /home/pedro/.dotfiles/
         clone: yes
 
+    - name: remove old bashrc
+      file:
+        path: /home/pedro/.bashrc
+        state: absent
+
+    - name: remove old bash_profile
+      file:
+        path: /home/pedro/.bash_profile
+        state: absent
+
     - name: stow dotfiles
       command: 
-        chdir: /home/pedro/.dotfiles/ 
-        cmd: stow .
+        chdir: /home/pedro/.dotfiles/
+        cmd: stow *
