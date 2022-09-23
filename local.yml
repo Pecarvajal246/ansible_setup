@@ -13,12 +13,15 @@
         disable_gpg_check: True
       when: ansible_distribution == 'Fedora'
 
-    - name: Enable CORPS
+    - name: Enable iosevka CORPS
       community.general.copr:
         state: enabled
-        name: 
-          - peterwu/iosevka
-          - agriffis/neovim-nightly
+        name: peterwu/iosevka
+
+    - name: Enable neovim-nightly CORPS
+      community.general.copr:
+        state: enabled
+        name: agriffis/neovim-nightly
 
     - name: install packages
       package:
