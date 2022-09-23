@@ -56,6 +56,6 @@
         state: absent
 
     - name: stow dotfiles
-      command: 
+      shell:
         chdir: /home/pedro/.dotfiles/
         cmd: stow *
