@@ -51,9 +51,9 @@
         path: /home/pedro/.bashrc
         state: absent
 
-    - name: remove old bash_profile
+    - name: remove old profile
       file:
-        path: /home/pedro/.bash_profile
+        path: /home/pedro/.profile
         state: absent
 
     - name: stow dotfiles
