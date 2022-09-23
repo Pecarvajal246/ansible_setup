@@ -34,7 +34,7 @@
 
     - name: dotfiles
       become: true
-      become_user: "{{ local_user }}"
+      become_user: "pedro"
       git:
         repo: https://github.com/Pecarvajal246/.dotfiles.git
         dest: "{{ ansible_env.HOME }}"
