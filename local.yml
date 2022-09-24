@@ -68,4 +68,5 @@
       copy:
         src: scripts/
         dest: /home/pedro/.local/bin/
+        directory_mode: a+x
         owner: pedro
