@@ -63,3 +63,9 @@
       shell:
         chdir: /home/pedro/.dotfiles/
         cmd: stow *
+
+    - name: copy scripts
+      copy:
+      src: scripts/
+      dest: /home/pedro/.local/bin/
+      owner: pedro
