@@ -17,16 +17,19 @@
       community.general.copr:
         state: enabled
         name: peterwu/iosevka
+      when: ansible_distribution == 'Fedora'
 
     - name: Enable neovim-nightly CORPS
       community.general.copr:
         state: enabled
         name: agriffis/neovim-nightly
+      when: ansible_distribution == 'Fedora'
 
     - name: install packages
       package:
         name:
           - stow
+          - gcc-c++
           - rofi
           - awesome
           - mpv
