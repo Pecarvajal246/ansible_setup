@@ -3,6 +3,12 @@
   connection: local
   become: true
 
+  pre_tasks:
+    - name: Update repos
+      dnf:
+        - update_cache: yes
+      when: ansible_distribution == 'Fedora'
+
   tasks:
     - name: Enable the RPM Fusion repository
       dnf:
@@ -38,6 +44,7 @@
           - nitrogen
           - kitty
           - fish
+          - xclip
           - streamlink
           - iosevka-fonts
           - neovim
