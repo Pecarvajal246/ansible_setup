@@ -25,10 +25,10 @@
         name: peterwu/iosevka
       when: ansible_distribution == 'Fedora'
 
-    - name: Enable neovim-nightly CORPS
+    - name: Enable qtile CORPS
       community.general.copr:
         state: enabled
-        name: agriffis/neovim-nightly
+        name: frostyx/qtile
       when: ansible_distribution == 'Fedora'
 
     - name: install packages
@@ -39,15 +39,42 @@
           - rofi
           - awesome
           - mpv
+          - mpd
+          - mpdris2
+          - ncmpcpp
+          - dunst
           - sxhkd
           - picom
-          - nitrogen
           - kitty
           - fish
           - xclip
-          - streamlink
+          - playerctl
           - iosevka-fonts
           - neovim
+          - qtile
+          - fzf
+          - alacritty
+
+    - name: python packages
+      pip:
+        name:
+          - dbus-next
+
+    - name: install pipx
+      pip:
+        name: pipx
+        extra_args: --user
+
+    - name: pipx packages
+      community.general.pipx:
+        name:
+          - yt-dlp
+          - streamlink
+
+    - name: install twofi
+      community.general.pipx:
+        name: twofi
+        source: git+https://github.com/Pecarvajal246/twofi
 
     - name: dotfiles
       become_user: pedro
@@ -69,7 +96,7 @@
     - name: stow dotfiles
       shell:
         chdir: /home/pedro/.dotfiles/
-        cmd: stow *
+        cmd: stow --restow *
 
     - name: copy scripts
       copy:
