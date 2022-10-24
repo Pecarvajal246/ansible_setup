@@ -72,11 +72,13 @@
         name: pipx
         extra_args: --user
 
-    - name: pipx packages
+    - name: install streamlink
       community.general.pipx:
-        name:
-          - yt-dlp
-          - streamlink
+        name: streamlink
+
+    - name: install yt-dlp
+      community.general.pipx:
+        name: yt-dlp
 
     - name: install twofi
       community.general.pipx:
