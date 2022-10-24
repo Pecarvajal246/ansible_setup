@@ -61,6 +61,7 @@
           - fzf
           - alacritty
           - python3-pip
+          - feh
 
     - name: python packages
       pip:
@@ -73,14 +74,17 @@
         extra_args: --user
 
     - name: install streamlink
+      become_user: pedro
       community.general.pipx:
         name: streamlink
 
     - name: install yt-dlp
+      become_user: pedro
       community.general.pipx:
         name: yt-dlp
 
     - name: install twofi
+      become_user: pedro
       community.general.pipx:
         name: twofi
         source: git+https://github.com/Pecarvajal246/twofi
