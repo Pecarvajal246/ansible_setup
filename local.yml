@@ -54,6 +54,7 @@
           - qtile
           - fzf
           - alacritty
+          - python3-pip
 
     - name: python packages
       pip:
