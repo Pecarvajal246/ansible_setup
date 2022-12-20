@@ -9,12 +9,6 @@
         update_cache: yes
       when: ansible_distribution == 'Fedora'
 
-    - name: Update packages
-      dnf:
-        name: "*"
-        state: latest
-      when: ansible_distribution == 'Fedora'
-
   tasks:
     - name: Enable the RPM Fusion repository
       dnf:
@@ -60,7 +54,6 @@
           - qtile
           - fzf
           - alacritty
-          - python3-pip
           - feh
 
     - name: python packages

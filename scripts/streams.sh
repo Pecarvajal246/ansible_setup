@@ -15,7 +15,6 @@ if [[ $url == *"twitch.tv"* ]];then
 	streamlink $url &
 	chatterino --channels $channel &
 else
-	# mpv --ytdl-format='bestvideo[height<=?720][fps<=?60][vcodec!=?vp9]+bestaudio/best' $url &
 	mpv $url &
 fi
 
