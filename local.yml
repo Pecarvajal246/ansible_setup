@@ -19,42 +19,54 @@
         disable_gpg_check: True
       when: ansible_distribution == 'Fedora'
 
-    - name: Enable iosevka CORPS
+
+    - name: Add the flathub flatpak repository remote to the user installation
+      community.general.flatpak_remote:
+        name: flathub
+        state: present
+        flatpakrepo_url: https://flathub.org/repo/flathub.flatpakrepo
+
+    - name: Enable starship CORPS
       community.general.copr:
         state: enabled
-        name: peterwu/iosevka
+        name: atim/starship
       when: ansible_distribution == 'Fedora'
 
-    - name: Enable qtile CORPS
-      community.general.copr:
-        state: enabled
-        name: frostyx/qtile
-      when: ansible_distribution == 'Fedora'
 
     - name: install packages
       package:
         name:
           - stow
+          - exa
           - gcc-c++
-          - rofi
-          - awesome
           - mpv
           - mpd
           - mpdris2
           - ncmpcpp
-          - dunst
-          - sxhkd
-          - picom
           - kitty
+          - aria2
           - fish
-          - xclip
-          - playerctl
-          - iosevka-fonts
           - neovim
-          - qtile
           - fzf
           - alacritty
           - feh
+          - starship
+          - ripgrep
+          - rust
+          - cargo
+          - qbittorrent
+          - postgres-server
+          - postgres-contrib
+          - kernel-headers
+          - kernel-devel
+          - '@Development tools and libraries'
+
+        name: Install flatpaks
+        community.general.flatpak:
+          name:
+            - rest.insomnia.Insomnia
+            - com.spotify.Client
+
 
     - name: python packages
       pip:
@@ -65,6 +77,11 @@
       pip:
         name: pipx
         extra_args: --user
+
+    - name: install beets
+      become_user: pedro
+      community.general.pipx:
+        name: beets
 
     - name: install streamlink
       become_user: pedro
@@ -81,6 +98,11 @@
       community.general.pipx:
         name: twofi
         source: git+https://github.com/Pecarvajal246/twofi
+
+    - name: install fnm
+      become_user: pedro
+      community.general.cargo:
+        name: fnm
 
     - name: dotfiles
       become_user: pedro
