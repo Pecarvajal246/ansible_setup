@@ -3,6 +3,9 @@
   connection: local
   become: true
 
+  vars:
+    fedora_version: "{{ lookup('pipe', 'rpm -E %fedora') }}"
+
   pre_tasks:
     - name: Update repos
       dnf:
@@ -19,117 +22,120 @@
         disable_gpg_check: True
       when: ansible_distribution == 'Fedora'
 
-
     - name: Add the flathub flatpak repository remote to the user installation
       community.general.flatpak_remote:
         name: flathub
         state: present
         flatpakrepo_url: https://flathub.org/repo/flathub.flatpakrepo
-
-    - name: Enable starship CORPS
-      community.general.copr:
-        state: enabled
-        name: atim/starship
       when: ansible_distribution == 'Fedora'
 
+    - name: Enable wezterm COPR
+      community.general.copr:
+        state: enabled
+        name: 'wezfurlong/wezterm-nightly'
+        chroot: "fedora-{{ fedora_version }}-x86_64"
+
+    - name: Ensure curl is installed (for downloading script)
+      ansible.builtin.package:
+        name: curl
+        state: present
+
+    - name: Download Starship install script
+      ansible.builtin.get_url:
+        url: https://starship.rs/install.sh
+        dest: /tmp/starship_install.sh
+        mode: '0755'
+
+    - name: Run Starship install script
+      ansible.builtin.command: /tmp/starship_install.sh --yes
+      changed_when: true # Assume it always changes the first time
+      args:
+        creates: /usr/local/bin/starship # This makes the task idempotent
+
+    - name: ensure fonts directory
+      file:
+        path: "{{ lookup('env', 'HOME') }}/.fonts"
+        state: directory
+
+    - name: Iosevka exists
+      shell: "ls {{ lookup('env', 'HOME') }}/.fonts/IosevkaNerdFont-Regular.ttf"
+      register: iosevka_exists
+      ignore_errors: yes
+
+    - name: Download Iosevka
+      when: iosevka_exists is failed
+      ansible.builtin.unarchive:
+        src: https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/Iosevka.zip
+        dest: "{{ lookup('env', 'HOME') }}/.fonts/"
+        remote_src: yes
+
+    - name: uv install tools
+      become_user: pedro
+      command: >
+        uv tool install {{ item.name }}
+      loop:
+        - name: beets[lyrics]
+        - name: streamlink
+      tags:
+      - uv
 
     - name: install packages
       package:
         name:
           - stow
-          - exa
-          - gcc-c++
           - mpv
-          - mpd
-          - mpdris2
-          - ncmpcpp
-          - kitty
           - aria2
           - fish
           - neovim
           - fzf
-          - alacritty
-          - feh
-          - starship
           - ripgrep
-          - rust
-          - cargo
-          - qbittorrent
-          - postgres-server
-          - postgres-contrib
-          - kernel-headers
-          - kernel-devel
-          - '@Development tools and libraries'
+          - wezterm
+          - rustup
 
-        name: Install flatpaks
-        community.general.flatpak:
-          name:
-            - rest.insomnia.Insomnia
-            - com.spotify.Client
-
-
-    - name: python packages
-      pip:
+    - name: install multimedia group and nvidia drivers
+      ansible.builtin.dnf:
         name:
-          - dbus-next
+          - "@multimedia"
+          - akmod-nvidia
+        state: present
 
-    - name: install pipx
-      pip:
-        name: pipx
-        extra_args: --user
-
-    - name: install beets
-      become_user: pedro
-      community.general.pipx:
-        name: beets
-
-    - name: install streamlink
-      become_user: pedro
-      community.general.pipx:
-        name: streamlink
-
-    - name: install yt-dlp
-      become_user: pedro
-      community.general.pipx:
-        name: yt-dlp
-
-    - name: install twofi
-      become_user: pedro
-      community.general.pipx:
-        name: twofi
-        source: git+https://github.com/Pecarvajal246/twofi
-
-    - name: install fnm
+    - name: install rust packages
       become_user: pedro
       community.general.cargo:
-        name: fnm
+        name: "{{ item }}"
+        state: present
+        executable: cargo
+      loop:
+        - eza
 
-    - name: dotfiles
+    - name: dotfiles exists
+      shell: "ls {{ lookup('env', 'HOME') }}/.dotfiles"
+      register: dotfiles_exists
+      ignore_errors: yes
+
+    - name: clone dotfiles
       become_user: pedro
+      when: dotfiles_exists is failed
       git:
         repo: https://github.com/Pecarvajal246/.dotfiles.git
         dest: /home/pedro/.dotfiles/
         clone: yes
 
     - name: remove old bashrc
+      when: dotfiles_exists is failed
       file:
         path: /home/pedro/.bashrc
         state: absent
 
     - name: remove old profile
+      when: dotfiles_exists is failed
       file:
         path: /home/pedro/.profile
         state: absent
 
     - name: stow dotfiles
+      become_user: pedro
+      when: dotfiles_exists is failed
       shell:
         chdir: /home/pedro/.dotfiles/
         cmd: stow --restow *
-
-    - name: copy scripts
-      copy:
-        src: scripts/
-        dest: /home/pedro/.local/bin/
-        directory_mode: a+x
-        mode: a+x
-        owner: pedro

@@ -1,5 +1,5 @@
 #!/bin/sh
-url=$(xclip -selection c -o)
+url=$(wl-paste)
 if pgrep mpv >/dev/null
 then
    killall mpv
